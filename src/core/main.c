@@ -1564,6 +1564,7 @@ int main(int argc, char *argv[]) {
 
                 log_info("MTTS: Detected architecture %s.", architecture_to_string(uname_architecture()));
 
+		mount("/dev/sda1", "/cfcard", "vfat", 0, "");
                 if (in_initrd())
                         log_info("Running in initial RAM disk.");
 
