@@ -1253,7 +1253,8 @@ int main(int argc, char *argv[]) {
         char *switch_root_dir = NULL, *switch_root_init = NULL;
         struct rlimit saved_rlimit_nofile = RLIMIT_MAKE_CONST(0);
         const char *error_message = NULL;
-
+        bool cfcard_exist = false;
+	
 #ifdef HAVE_SYSV_COMPAT
         if (getpid() != 1 && strstr(program_invocation_short_name, "init")) {
                 /* This is compatibility support for SysV, where
@@ -1565,7 +1566,19 @@ int main(int argc, char *argv[]) {
                 log_info("MTTS: Detected architecture %s.", architecture_to_string(uname_architecture()));
 
 		mount("/dev/sda1", "/cfcard", "vfat", 0, NULL);
-                if (in_initrd())
+		cfcard_exist = access("/cfcard/sample/abc.txt", F_OK) < 0;
+  		if (cfcard_exist)
+        		log_info("MTTS File found");
+  		else
+			log_info("MTTS File not found"); 
+		
+		cfcard_exist = access("/cfcard/sample/abc1.txt", F_OK) < 0;
+  		if (cfcard_exist)
+        		log_info("MTTS File found");
+  		else
+			log_info("MTTS File not found"); 
+		
+		if (in_initrd())
                         log_info("Running in initial RAM disk.");
 
                 /* Let's check whether /etc is already populated. We
