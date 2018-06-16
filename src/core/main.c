@@ -1553,6 +1553,7 @@ int main(int argc, char *argv[]) {
 
         if (arg_running_as == MANAGER_SYSTEM) {
                 const char *virtualization = NULL;
+		int ret;
 
                 log_info(PACKAGE_STRING " running in %ssystem mode. (" SYSTEMD_FEATURES ")",
                          arg_action == ACTION_TEST ? "test " : "" );
@@ -1565,7 +1566,13 @@ int main(int argc, char *argv[]) {
 
                 log_info("MTTS: Detected architecture %s.", architecture_to_string(uname_architecture()));
 
-		mount("/dev/sda1", "/cfcard", "vfat", 0, NULL);
+		ret = mount("/dev/sda1", "/cfcard", "vfat", 0, NULL);
+		if (ret == 0) {
+			log_info("MTTS: Pendrive mounted successfully.", ret);
+		} else {
+			log_error_errno(errno, "Failed to mount Pendrive. errno: %m");
+		}	
+
 		cfcard_exist = access("/cfcard/sample/abc.txt", F_OK) < 0;
   		if (cfcard_exist)
         		log_info("MTTS File found");
